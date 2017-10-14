@@ -1,12 +1,18 @@
 package com.example.android.barcode_scanner;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -17,19 +23,22 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
 
+    private CameraSource cameraSource;
+    private SurfaceView cameraView;
+    private int CAMERA_REQUEST_CODE=334;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final SurfaceView cameraView = (SurfaceView) findViewById(R.id.camera_view);
-        final TextView barcodeInfo = (TextView) findViewById(R.id.code_info);
+        cameraView = findViewById(R.id.camera_view);
+        final TextView barcodeInfo = findViewById(R.id.code_info);
         BarcodeDetector barcodeDetector =
                 new BarcodeDetector.Builder(this)
                         .setBarcodeFormats(Barcode.QR_CODE)
                         .build();
 
-        final CameraSource cameraSource = new CameraSource
+        cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
                 .setRequestedPreviewSize(640, 480)
                 .build();
@@ -37,6 +46,12 @@ public class MainActivity extends Activity {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
                 try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+                            return;
+                        }
+                    }
                     cameraSource.start(cameraView.getHolder());
 
                 } catch (IOException ie) {
@@ -74,5 +89,28 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (cameraSource != null) {
+                    try {
+                        cameraSource.start(cameraView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            } else {
+                Toast.makeText(this, "Need camera permission", Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 }

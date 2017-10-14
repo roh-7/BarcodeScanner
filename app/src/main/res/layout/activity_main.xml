@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <SurfaceView
-        android:layout_width="640px"
-        android:layout_height="480px"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
         android:id="@+id/camera_view"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="60dp"
+        android:tint="@color/colorAccent"
+        android:src="@drawable/target"/>
 
     <TextView
+        android:id="@+id/code_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/code_info"
-        android:layout_toRightOf="@+id/camera_view"
-        android:textSize="20sp"
-        android:layout_marginLeft="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="16dp"
+        android:textColor="@android:color/holo_red_light"
         android:text="Nothing to read."
-        android:layout_alignParentTop="true"
-        />
+        android:textSize="16sp" />
 
 </RelativeLayout>

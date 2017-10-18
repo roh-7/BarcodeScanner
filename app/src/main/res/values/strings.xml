@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Barcode_Scanner</string>
+    <string name="text">Nothing to read.</string>
 </resources>
